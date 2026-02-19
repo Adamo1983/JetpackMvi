@@ -1,4 +1,4 @@
-# JetpackMvi (TestIdeAiApp)
+# JetpackMvi
 
 JetpackMvi è un'applicazione Android dimostrativa avanzata che implementa una gestione completa (CRUD) di "Post" utilizzando le più moderne tecnologie e best practice di sviluppo, con un'architettura **MVI (Model-View-Intent)** pulita e scalabile.
 
