@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">TestIdeAiApp</string>
+
+    <!-- Home Screen -->
+    <string name="home_title">Explore Posts</string>
+    <string name="home_add_post">Add Post</string>
+    <string name="home_error_generic">Unknown error</string>
+
+    <!-- Detail Screen -->
+    <string name="detail_title">Post Details</string>
+    <string name="detail_author_id">Author ID: %1$d</string>
+    <string name="detail_delete_dialog_title">Delete Post</string>
+    <string name="detail_delete_dialog_text">Are you sure you want to delete this post?</string>
+    <string name="detail_delete_confirm">Delete</string>
+    <string name="detail_cancel">Cancel</string>
+    <string name="detail_edit">Edit</string>
+    <string name="detail_back">Back</string>
+    <string name="detail_error_not_found">Post not found</string>
+    <string name="detail_error_delete">Failed to delete post</string>
+
+    <!-- Create/Edit Screen -->
+    <string name="create_title">Create Post</string>
+    <string name="edit_title">Edit Post</string>
+    <string name="field_title">Title</string>
+    <string name="field_body">Body</string>
+    <string name="field_theme">Image Theme</string>
+    <string name="button_create">Create</string>
+    <string name="button_save_changes">Save Changes</string>
+    <string name="error_empty_fields">Title and body cannot be empty</string>
+    <string name="error_create_post">Failed to create post</string>
+    <string name="error_update_post">Failed to update post</string>
+
+    <!-- Themes -->
+    <string name="theme_landscape">Landscape</string>
+    <string name="theme_robot">Robot</string>
+    <string name="theme_avatar">Avatar</string>
+    <string name="theme_tech">Technology</string>
+    <string name="theme_kitten">Kitten</string>
+    <string name="theme_food">Food</string>
+    <string name="theme_nature">Nature</string>
+    <string name="theme_beard">Beard</string>
+    <string name="theme_cage">Nicolas Cage</string>
+</resources>

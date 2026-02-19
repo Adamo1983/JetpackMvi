@@ -1,0 +1,24 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Outer hexagonal shape representing structure/architecture -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,26 L78,40 L78,68 L54,82 L30,68 L30,40 Z" />
+
+    <!-- Inner design representing clean layers and AI/Modernity -->
+    <path
+        android:fillColor="#8E24AA"
+        android:pathData="M54,35 L69,44 L69,64 L54,73 L39,64 L39,44 Z" />
+
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,45 L60,49 L60,59 L54,63 L48,59 L48,49 Z" />
+
+    <!-- Abstract "A" or spark for AI/Innovation -->
+    <path
+        android:fillColor="#D81B60"
+        android:pathData="M54,50 L56,54 L60,54 L57,57 L58,61 L54,59 L50,61 L51,57 L48,54 L52,54 Z" />
+</vector>
