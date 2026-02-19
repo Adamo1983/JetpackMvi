@@ -1,56 +1,76 @@
-# TestIdeAiApp
+# JetpackMvi (TestIdeAiApp)
 
-TestIdeAiApp è un'applicazione Android dimostrativa che implementa una gestione completa (CRUD) di "Post" utilizzando le più moderne tecnologie e best practice di sviluppo.
+JetpackMvi è un'applicazione Android dimostrativa avanzata che implementa una gestione completa (CRUD) di "Post" utilizzando le più moderne tecnologie e best practice di sviluppo, con un'architettura **MVI (Model-View-Intent)** pulita e scalabile.
 
 ## 🚀 Caratteristiche
 
+- **Architettura MVI**: Gestione dello stato unidirezionale e prevedibile per ogni schermata.
 - **CRUD Completo**: Visualizzazione lista, dettaglio, creazione, modifica ed eliminazione di post.
+- **Temi Immagini Dinamici**: Ogni post può avere un tema visivo differente (Landscape, Robot, Avatar, Tech, Kitten, Food, Nature, Beard, Nicolas Cage).
+- **Gestione Immagini Centralizzata**: Logica di generazione URL astratta tramite `ImageProvider` nel layer di dominio.
 - **Offline-First**: I dati vengono salvati localmente in un database Room per essere consultabili anche senza connessione internet.
 - **Sincronizzazione Remota**: Integrazione con REST API (JSONPlaceholder) tramite Retrofit.
-- **Architettura Pulita (Clean Architecture)**: Separazione netta tra Data, Domain e Presentation layer.
-- **UI Moderna**: Interfaccia interamente sviluppata in Jetpack Compose con supporto al tema chiaro/scuro e Material 3.
+- **UI Moderna**: Interfaccia sviluppata in Jetpack Compose con Material 3 e componenti dinamici (Dropdown menu, animazioni di caricamento).
 
 ## 🛠️ Tech Stack
 
-- **Linguaggio**: Kotlin
-- **UI**: Jetpack Compose
+- **UI**: Jetpack Compose (Material 3)
 - **Dependency Injection**: Hilt (Dagger)
 - **Database Locale**: Room
 - **Networking**: Retrofit & OkHttp
-- **Asincronia**: Coroutines & Flow
-- **JSON Parsing**: Moshi
-- **Image Loading**: Coil
-- **Navigazione**: Compose Navigation
+- **Immagini**: Coil
+- **Asincronia**: Kotlin Coroutines & Flow
+- **Architettura**: Clean Architecture + MVI
 
 ## 🏗️ Architettura
 
-Il progetto segue i principi della **Clean Architecture**:
+Il progetto segue i principi della **Clean Architecture** e del pattern **MVI**:
 
-1.  **Domain Layer**: Contiene i modelli di business (`Post`), le interfacce dei repository e gli Use Case (es. `GetPostsUseCase`, `CreatePostUseCase`). È indipendente da librerie esterne.
-2.  **Data Layer**: Implementa le interfacce del repository. Gestisce la logica di caching tra il database locale (Room) e il network (Retrofit). Include anche i DTO e i Mapper.
-3.  **Presentation Layer**: Implementa la UI utilizzando il pattern MVVM. Gli stati sono gestiti tramite `StateFlow`.
-    - `navigation`: Gestisce il NavHost e le rotte.
-    - `screen`: Contiene le diverse schermate (Home, Detail, Create, Edit) e i relativi ViewModel.
-    - `theme`: Definisce i colori, la tipografia e il tema dell'app.
+1.  **Domain Layer**:
+    - **Models**: `Post`, `PostTheme`.
+    - **Use Cases**: Logica di business (es. `GetPostsUseCase`, `UpdatePostUseCase`).
+    - **Utils**: Interfaccia `ImageProvider` per la generazione degli URL delle immagini.
+2.  **Data Layer**:
+    - **Repository**: Implementazione di `PostRepository` con strategia di caching locale/remoto.
+    - **Local**: Database Room, DAO ed Entity.
+    - **Remote**: Retrofit API e DTO.
+    - **Utils**: `PicsumImageProvider` che implementa la logica multi-tema per le immagini.
+3.  **Presentation Layer**:
+    - **MVI Pattern**: Ogni schermata ha un `UiState` (stato) e un `Action` (intento dell'utente).
+    - **ViewModel**: Gestiscono lo stato e reagiscono alle azioni.
+    - **Screens**: Componenti Compose (Home, Detail, Edit).
+
+## 🖼️ Sistema di Temi per le Immagini
+
+L'applicazione utilizza un sistema flessibile per associare immagini ai post senza caricarle manualmente. Grazie al `PostTheme`, l'URL dell'immagine viene generato dinamicamente usando diversi servizi:
+- **Lorem Picsum** (Landscape)
+- **Robohash** (Robots)
+- **i.pravatar.cc** (Avatars)
+- **LoremFlickr** (Tech, Kitten, Food, Nature)
+- **PlaceBeard** (Beard)
+- **PlaceCage** (Nicolas Cage)
 
 ## 📁 Struttura del Progetto
 
 ```text
-it.innovactors.testideaiapp/
+it.branjsmo.jetpackmvi/
 ├── data/
 │   ├── local/          # Room database, DAO ed Entities
 │   ├── remote/         # Retrofit API e DTO
 │   ├── repository/     # Implementazione del repository
-│   └── mappers/        # Funzioni di conversione modelli
+│   ├── mappers/        # Conversione DTO/Entity <-> Domain
+│   └── util/           # Implementazioni concrete (PicsumImageProvider)
 ├── domain/
-│   ├── model/          # Modelli di dominio
+│   ├── model/          # Modelli di dominio (Post, PostTheme)
 │   ├── repository/     # Interfacce dei repository
-│   └── usecase/        # Logica di business specifica
+│   ├── usecase/        # Use Case per la logica di business
+│   └── util/           # Astrazioni (ImageProvider)
 ├── presentation/
-│   ├── navigation/     # NavGraph e rotte
-│   ├── screen/         # Schermate e ViewModel (Home, Detail, Create, Edit)
+│   ├── screen/         # Schermate (View), ViewModel, UiState e Actions (MVI)
+│   ├── components/     # Componenti UI riutilizzabili
+│   ├── navigation/     # Navigazione Compose
 │   └── theme/          # Configurazioni Material 3
-└── di/                 # Moduli Hilt per la Dependency Injection
+└── di/                 # Moduli Hilt (Network, Database, Repository, Util)
 ```
 
 ## 🚥 Come iniziare
