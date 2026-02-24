@@ -29,6 +29,10 @@
     <string name="error_empty_fields">Title and body cannot be empty</string>
     <string name="error_create_post">Failed to create post</string>
     <string name="error_update_post">Failed to update post</string>
+    <string name="create_image_none">Nessuna immagine selezionata</string>
+    <string name="create_btn_camera">Camera</string>
+    <string name="create_btn_gallery">Galleria</string>
+    <string name="create_btn_default">Default</string>
 
     <!-- Themes -->
     <string name="theme_landscape">Landscape</string>
