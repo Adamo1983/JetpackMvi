@@ -1,4 +1,4 @@
-package it.branjsmo.jetpackmvi.data.remote.dto
+package it.branjsmo.jetpackmvi.data.remote.api.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

@@ -1,11 +1,11 @@
-package it.branjsmo.jetpackmvi.data.util
+package it.branjsmo.jetpackmvi.data.remote
 
 import it.branjsmo.jetpackmvi.domain.model.PostTheme
-import it.branjsmo.jetpackmvi.domain.util.ImageProvider
+import it.branjsmo.jetpackmvi.domain.repository.RepositoryImageProvider
 import javax.inject.Inject
 
-class PicsumImageProvider @Inject constructor() : ImageProvider {
-    override fun getPostImageUrl(postId: Int, theme: PostTheme, width: Int, height: Int): String {
+class PicsumImageProvider @Inject constructor() : RepositoryImageProvider {
+    override suspend fun getPostImageUrl(postId: Int, theme: PostTheme, width: Int, height: Int): String {
         return when (theme) {
             PostTheme.LANDSCAPE -> "https://picsum.photos/seed/$postId/$width/$height"
             PostTheme.ROBOT -> "https://robohash.org/$postId?size=${width}x${height}"

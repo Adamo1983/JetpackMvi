@@ -1,81 +1,52 @@
-# JetpackMvi
+# JetpackMvi - Android App
 
-JetpackMvi è un'applicazione Android dimostrativa avanzata che implementa una gestione completa (CRUD) di "Post" utilizzando le più moderne tecnologie e best practice di sviluppo, con un'architettura **MVI (Model-View-Intent)** pulita e scalabile.
+JetpackMvi è un'applicazione Android dimostrativa che implementa l'architettura **MVI (Model-View-Intent)** utilizzando le più moderne tecnologie di sviluppo Android. L'app permette di gestire un elenco di post, interagendo con un'API remota e gestendo lo stato in modo reattivo.
 
-## 🚀 Caratteristiche
+## 📱 Funzionalità dell'App
 
-- **Architettura MVI**: Gestione dello stato unidirezionale e prevedibile per ogni schermata.
-- **CRUD Completo**: Visualizzazione lista, dettaglio, creazione, modifica ed eliminazione di post.
-- **Temi Immagini Dinamici**: Ogni post può avere un tema visivo differente (Landscape, Robot, Avatar, Tech, Kitten, Food, Nature, Beard, Nicolas Cage).
-- **Gestione Immagini Centralizzata**: Logica di generazione URL astratta tramite `ImageProvider` nel layer di dominio.
-- **Offline-First**: I dati vengono salvati localmente in un database Room per essere consultabili anche senza connessione internet.
-- **Sincronizzazione Remota**: Integrazione con REST API (JSONPlaceholder) tramite Retrofit.
-- **UI Moderna**: Interfaccia sviluppata in Jetpack Compose con Material 3 e componenti dinamici (Dropdown menu, animazioni di caricamento).
+L'applicazione offre un'esperienza completa per la gestione di contenuti (CRUD):
 
-## 🛠️ Tech Stack
+1.  **Visualizzazione Elenco (Home):** All'avvio, l'app recupera una lista di post da un servizio REST esterno. 
+2.  **Dettaglio Post:** Cliccando su un post, l'utente può visualizzarne il contenuto completo e l'immagine dedicata.
+3.  **Gestione Multimediale Avanzata:** In fase di creazione post, l'utente può scegliere l'immagine tramite tre modalità:
+    *   **Fotocamera:** Scatto di una foto in tempo reale tramite integrazione CameraX.
+    *   **Galleria:** Selezione di un'immagine esistente dal dispositivo tramite Photo Picker.
+    *   **Generazione Dinamica:** Se non viene fornita un'immagine locale, l'app ne genera una automaticamente tramite provider esterni (Picsum, Robohash, etc.) in base alla categoria scelta (Landscape, Food, Tech, etc.).
+4.  **Creazione Post:** Form interattivo per l'aggiunta di nuovi contenuti con anteprima dell'immagine selezionata.
+5.  **Modifica Post:** L'utente può modificare i post esistenti aggiornando titolo e contenuto.
+6.  **Eliminazione Post:** Funzionalità per rimuovere un post sia dall'interfaccia che (simulando) dal server.
+7.  **Persistenza e Preferenze:** Utilizzo di DataStore per il salvataggio di impostazioni locali.
 
-- **UI**: Jetpack Compose (Material 3)
-- **Dependency Injection**: Hilt (Dagger)
-- **Database Locale**: Room
-- **Networking**: Retrofit & OkHttp
-- **Immagini**: Coil
-- **Asincronia**: Kotlin Coroutines & Flow
-- **Architettura**: Clean Architecture + MVI
+## 🛠️ Stack Tecnologico
 
-## 🏗️ Architettura
+L'app è costruita seguendo le migliori pratiche di "Modern Android Development" (MAD):
 
-Il progetto segue i principi della **Clean Architecture** e del pattern **MVI**:
+### Core & UI
+*   **Kotlin**: Linguaggio di programmazione principale.
+*   **Jetpack Compose**: Toolkit moderno per la creazione di interfacce utente dichiarative.
+*   **Material 3**: Ultima versione del design system di Google.
+*   **Navigation Compose**: Gestione della navigazione type-safe.
 
-1.  **Domain Layer**:
-    - **Models**: `Post`, `PostTheme`.
-    - **Use Cases**: Logica di business (es. `GetPostsUseCase`, `UpdatePostUseCase`).
-    - **Utils**: Interfaccia `ImageProvider` per la generazione degli URL delle immagini.
-2.  **Data Layer**:
-    - **Repository**: Implementazione di `PostRepository` con strategia di caching locale/remoto.
-    - **Local**: Database Room, DAO ed Entity.
-    - **Remote**: Retrofit API e DTO.
-    - **Utils**: `PicsumImageProvider` che implementa la logica multi-tema per le immagini.
-3.  **Presentation Layer**:
-    - **MVI Pattern**: Ogni schermata ha un `UiState` (stato) e un `Action` (intento dell'utente).
-    - **ViewModel**: Gestiscono lo stato e reagiscono alle azioni.
-    - **Screens**: Componenti Compose (Home, Detail, Edit).
+### Architettura
+*   **MVI (Model-View-Intent)**: Gestione dello stato basata su flussi unidirezionali (UDF).
+*   **Clean Architecture**: Separazione in Data, Domain e Presentation layer.
+*   **Hilt (Dagger)**: Dependency Injection.
 
-## 🖼️ Sistema di Temi per le Immagini
+### Gestione Dati & Network
+*   **Retrofit & OkHttp**: Chiamate API REST.
+*   **Kotlinx Serialization**: Parsing JSON.
+*   **Room Database**: Persistenza locale.
+*   **DataStore**: Gestione preferenze.
+*   **Coroutines & Flow**: Programmazione asincrona e reattiva.
 
-L'applicazione utilizza un sistema flessibile per associare immagini ai post senza caricarle manualmente. Grazie al `PostTheme`, l'URL dell'immagine viene generato dinamicamente usando diversi servizi:
-- **Lorem Picsum** (Landscape)
-- **Robohash** (Robots)
-- **i.pravatar.cc** (Avatars)
-- **LoremFlickr** (Tech, Kitten, Food, Nature)
-- **PlaceBeard** (Beard)
-- **PlaceCage** (Nicolas Cage)
+### Librerie di Supporto
+*   **CameraX**: Per l'acquisizione di foto direttamente dall'app.
+*   **Coil**: Caricamento immagini asincrono da URL o URI locali.
+*   **Accompanist**: Gestione dei permessi di sistema (es. Fotocamera).
 
-## 📁 Struttura del Progetto
+## 🏗️ Struttura del Progetto
 
-```text
-it.branjsmo.jetpackmvi/
-├── data/
-│   ├── local/          # Room database, DAO ed Entities
-│   ├── remote/         # Retrofit API e DTO
-│   ├── repository/     # Implementazione del repository
-│   ├── mappers/        # Conversione DTO/Entity <-> Domain
-│   └── util/           # Implementazioni concrete (PicsumImageProvider)
-├── domain/
-│   ├── model/          # Modelli di dominio (Post, PostTheme)
-│   ├── repository/     # Interfacce dei repository
-│   ├── usecase/        # Use Case per la logica di business
-│   └── util/           # Astrazioni (ImageProvider)
-├── presentation/
-│   ├── screen/         # Schermate (View), ViewModel, UiState e Actions (MVI)
-│   ├── components/     # Componenti UI riutilizzabili
-│   ├── navigation/     # Navigazione Compose
-│   └── theme/          # Configurazioni Material 3
-└── di/                 # Moduli Hilt (Network, Database, Repository, Util)
-```
-
-## 🚥 Come iniziare
-
-1. Clonare il repository.
-2. Aprire il progetto in Android Studio (Ladybug o superiore).
-3. Eseguire la sincronizzazione di Gradle.
-4. Avviare l'app su un emulatore o dispositivo fisico.
+Il progetto è organizzato in pacchetti che riflettono la Clean Architecture:
+*   `data/`: Implementazione repository, database e API.
+*   `domain/`: Modelli, interfacce e Use Case.
+*   `presentation/`: UI (Compose), ViewModel (MVI) e temi.

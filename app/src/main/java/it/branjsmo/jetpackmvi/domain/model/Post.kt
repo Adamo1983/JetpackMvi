@@ -5,5 +5,6 @@ data class Post(
     val userId: Int,
     val title: String,
     val body: String,
-    val theme: PostTheme = PostTheme.LANDSCAPE
+    val theme: PostTheme = PostTheme.LANDSCAPE,
+    val imageUrl: String? = null
 )

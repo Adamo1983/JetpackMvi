@@ -1,6 +1,6 @@
-package it.branjsmo.jetpackmvi.data.remote
+package it.branjsmo.jetpackmvi.data.remote.api
 
-import it.branjsmo.jetpackmvi.data.remote.dto.PostDto
+import it.branjsmo.jetpackmvi.data.remote.api.dto.PostDto
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET

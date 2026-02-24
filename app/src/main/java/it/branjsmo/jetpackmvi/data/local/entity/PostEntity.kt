@@ -9,5 +9,6 @@ data class PostEntity(
     val userId: Int,
     val title: String,
     val body: String,
-    val theme: String
+    val theme: String,
+    val imageUrl: String? = null
 )

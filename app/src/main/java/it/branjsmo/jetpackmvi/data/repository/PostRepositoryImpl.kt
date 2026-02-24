@@ -4,7 +4,7 @@ import it.branjsmo.jetpackmvi.data.local.PostDao
 import it.branjsmo.jetpackmvi.data.mappers.toDomain
 import it.branjsmo.jetpackmvi.data.mappers.toEntity
 import it.branjsmo.jetpackmvi.data.mappers.toDto
-import it.branjsmo.jetpackmvi.data.remote.PostApi
+import it.branjsmo.jetpackmvi.data.remote.api.PostApi
 import it.branjsmo.jetpackmvi.domain.model.Post
 import it.branjsmo.jetpackmvi.domain.repository.PostRepository
 import kotlinx.coroutines.flow.Flow

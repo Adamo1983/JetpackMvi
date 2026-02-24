@@ -1,7 +1,7 @@
 package it.branjsmo.jetpackmvi.data.mappers
 
 import it.branjsmo.jetpackmvi.data.local.entity.PostEntity
-import it.branjsmo.jetpackmvi.data.remote.dto.PostDto
+import it.branjsmo.jetpackmvi.data.remote.api.dto.PostDto
 import it.branjsmo.jetpackmvi.domain.model.Post
 import it.branjsmo.jetpackmvi.domain.model.PostTheme
 
@@ -11,7 +11,8 @@ fun PostEntity.toDomain(): Post {
         userId = userId,
         title = title,
         body = body,
-        theme = try { PostTheme.valueOf(theme) } catch (e: Exception) { PostTheme.LANDSCAPE }
+        theme = try { PostTheme.valueOf(theme) } catch (e: Exception) { PostTheme.LANDSCAPE },
+        imageUrl = imageUrl
     )
 }
 
@@ -21,7 +22,8 @@ fun Post.toEntity(): PostEntity {
         userId = userId,
         title = title,
         body = body,
-        theme = theme.name
+        theme = theme.name,
+        imageUrl = imageUrl
     )
 }
 

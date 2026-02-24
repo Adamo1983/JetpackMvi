@@ -7,7 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import it.branjsmo.jetpackmvi.R
 import it.branjsmo.jetpackmvi.domain.usecase.DeletePostUseCase
 import it.branjsmo.jetpackmvi.domain.usecase.GetPostDetailUseCase
-import it.branjsmo.jetpackmvi.domain.util.ImageProvider
+import it.branjsmo.jetpackmvi.domain.repository.RepositoryImageProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -17,7 +17,7 @@ import javax.inject.Inject
 class DetailViewModel @Inject constructor(
     private val getPostDetailUseCase: GetPostDetailUseCase,
     private val deletePostUseCase: DeletePostUseCase,
-    private val imageProvider: ImageProvider,
+    private val imageProvider: RepositoryImageProvider,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(DetailUiState())
