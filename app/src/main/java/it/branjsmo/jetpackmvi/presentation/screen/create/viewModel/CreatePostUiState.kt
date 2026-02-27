@@ -9,6 +9,7 @@ data class CreatePostUiState(
     val body: String = "",
     val selectedImageUri: Uri? = null,
     val theme: PostTheme = PostTheme.LANDSCAPE,
+    val themeImageUrl: String = "",
     val isLoading: Boolean = false,
     val isSuccess: Boolean = false,
     @get:StringRes val error: Int? = null

@@ -125,12 +125,14 @@ fun CreatePostScreen(
                         .clip(RoundedCornerShape(12.dp))
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                         .clickable {
-                            // Opzionale: apri dialog scelta
+                            if (uiState.selectedImageUri == null) {
+                                onAction(CreateAction.OnRefreshThemeImage)
+                            }
                         },
                     contentAlignment = Alignment.Center
                 ) {
                     AsyncImage(
-                        model = uiState.selectedImageUri ?: getThemePreviewUrl(uiState.theme),
+                        model = uiState.selectedImageUri ?: uiState.themeImageUrl,
                         contentDescription = "Selected Image",
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop
@@ -261,20 +263,6 @@ fun CreatePostScreen(
                 }
             }
         }
-    }
-}
-
-private fun getThemePreviewUrl(theme: PostTheme): String {
-    val seed = "preview"
-    return when (theme) {
-        PostTheme.LANDSCAPE -> "https://picsum.photos/seed/$seed/800/600"
-        PostTheme.ROBOT -> "https://robohash.org/$seed?size=800x600"
-        PostTheme.AVATAR -> "https://i.pravatar.cc/800?u=$seed"
-        PostTheme.TECH -> "https://loremflickr.com/800/600/technology?lock=1"
-        PostTheme.KITTEN -> "https://loremflickr.com/800/600/kitten?lock=1"
-        PostTheme.FOOD -> "https://loremflickr.com/800/600/food?lock=1"
-        PostTheme.NATURE -> "https://loremflickr.com/800/600/nature?lock=1"
-        PostTheme.BEARD -> "https://placebeard.it/800/600?random=1"
     }
 }
 

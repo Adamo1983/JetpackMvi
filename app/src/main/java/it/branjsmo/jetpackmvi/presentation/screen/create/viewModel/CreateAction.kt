@@ -9,5 +9,6 @@ sealed class CreateAction {
     data class OnBodyChange(val body: String) : CreateAction()
     data class OnImageSelected(val uri: Uri?) : CreateAction()
     data class OnThemeChange(val theme: PostTheme) : CreateAction()
+    data object OnRefreshThemeImage : CreateAction()
     data object OnCreateClick : CreateAction()
 }
