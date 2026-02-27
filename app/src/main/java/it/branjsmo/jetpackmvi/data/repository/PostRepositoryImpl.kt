@@ -8,9 +8,9 @@ import it.branjsmo.jetpackmvi.data.remote.api.PostApi
 import it.branjsmo.jetpackmvi.domain.model.Post
 import it.branjsmo.jetpackmvi.domain.repository.PostRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class PostRepositoryImpl @Inject constructor(
@@ -18,20 +18,21 @@ class PostRepositoryImpl @Inject constructor(
     private val dao: PostDao
 ) : PostRepository {
 
-    override fun getPosts(): Flow<List<Post>> = flow {
-        // Carica dati dal DB locale immediatamente
-        val localPostsFlow = dao.getPosts().map { entities ->
-            entities.map { it.toDomain() }
+    override fun getPosts(): Flow<List<Post>> = channelFlow {
+        // Osserva il DB locale in continuo
+        launch {
+            dao.getPosts().map { entities ->
+                entities.map { it.toDomain() }
+            }.collect { send(it) }
         }
-        emitAll(localPostsFlow)
 
-        // Tenta di aggiornare dal network
+        // Tenta di aggiornare dal network in parallelo
         try {
             val remotePosts = api.getPosts().map { it.toDomain() }
-            dao.deleteAllPosts()
             dao.insertPosts(remotePosts.map { it.toEntity() })
+            // Room emetterà automaticamente la lista aggiornata
         } catch (e: Exception) {
-            // Se fallisce il network, i dati locali sono già stati emessi tramite emitAll che osserva il DB
+            // Se fallisce il network, i dati locali sono già stati emessi
         }
     }
 
@@ -53,7 +54,10 @@ class PostRepositoryImpl @Inject constructor(
     override suspend fun createPost(post: Post): Post? {
         return try {
             val response = api.createPost(post.toDto())
-            val domainPost = response.toDomain()
+            val domainPost = response.toDomain().copy(
+                imageUrl = post.imageUrl,
+                theme = post.theme
+            )
             dao.insertPosts(listOf(domainPost.toEntity()))
             domainPost
         } catch (e: Exception) {

@@ -11,20 +11,25 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.filled.BrokenImage
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
@@ -33,6 +38,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import it.branjsmo.jetpackmvi.R
+import it.branjsmo.jetpackmvi.domain.model.PostTheme
 import it.branjsmo.jetpackmvi.presentation.components.LoadingAnimation
 import it.branjsmo.jetpackmvi.presentation.screen.create.viewModel.CreateAction
 import it.branjsmo.jetpackmvi.presentation.screen.create.viewModel.CreatePostUiState
@@ -48,7 +54,9 @@ fun CreatePostScreen(
     onAction: (CreateAction) -> Unit
 ) {
     val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
     var tempImageUri by remember { mutableStateOf<Uri?>(null) }
+    var expanded by remember { mutableStateOf(false) }
 
     // Launcher per la Galleria
     val galleryLauncher = rememberLauncherForActivityResult(
@@ -101,7 +109,7 @@ fun CreatePostScreen(
             )
         }
     ) { padding ->
-        Box(modifier = Modifier.padding(padding)) {
+        Box(modifier = Modifier.padding(padding).imePadding()) {
             Column(
                 modifier = Modifier
                     .padding(16.dp)
@@ -121,27 +129,12 @@ fun CreatePostScreen(
                         },
                     contentAlignment = Alignment.Center
                 ) {
-                    if (uiState.selectedImageUri != null) {
-                        AsyncImage(
-                            model = uiState.selectedImageUri,
-                            contentDescription = "Selected Image",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                    } else {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                imageVector = Icons.Default.BrokenImage,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Text(
-                                "Nessuna immagine selezionata",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
+                    AsyncImage(
+                        model = uiState.selectedImageUri ?: getThemePreviewUrl(uiState.theme),
+                        contentDescription = "Selected Image",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
                 }
 
                 Row(
@@ -161,7 +154,7 @@ fun CreatePostScreen(
                     ) {
                         Icon(Icons.Default.AddAPhoto, contentDescription = null)
                         Spacer(Modifier.width(4.dp))
-                        Text("Camera", style = MaterialTheme.typography.labelSmall)
+                        Text(stringResource(R.string.create_btn_camera), style = MaterialTheme.typography.labelSmall)
                     }
 
                     Button(
@@ -175,7 +168,7 @@ fun CreatePostScreen(
                     ) {
                         Icon(Icons.Default.PhotoLibrary, contentDescription = null)
                         Spacer(Modifier.width(4.dp))
-                        Text("Galleria", style = MaterialTheme.typography.labelSmall)
+                        Text(stringResource(R.string.create_btn_gallery), style = MaterialTheme.typography.labelSmall)
                     }
 
                     OutlinedButton(
@@ -183,7 +176,7 @@ fun CreatePostScreen(
                         modifier = Modifier.weight(1f),
                         contentPadding = PaddingValues(horizontal = 8.dp)
                     ) {
-                        Text("Default", style = MaterialTheme.typography.labelSmall)
+                        Text(stringResource(R.string.create_btn_default), style = MaterialTheme.typography.labelSmall)
                     }
                 }
 
@@ -192,8 +185,40 @@ fun CreatePostScreen(
                     onValueChange = { onAction(CreateAction.OnTitleChange(it)) },
                     label = { Text(stringResource(R.string.field_title)) },
                     modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
                 )
+
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = { expanded = !expanded },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    OutlinedTextField(
+                        value = stringResource(uiState.theme.toResId()),
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text(stringResource(R.string.field_theme)) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                        modifier = Modifier
+                            .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                            .fillMaxWidth()
+                    )
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        PostTheme.entries.forEach { theme ->
+                            DropdownMenuItem(
+                                text = { Text(stringResource(theme.toResId())) },
+                                onClick = {
+                                    onAction(CreateAction.OnThemeChange(theme))
+                                    expanded = false
+                                }
+                            )
+                        }
+                    }
+                }
 
                 OutlinedTextField(
                     value = uiState.body,
@@ -201,12 +226,23 @@ fun CreatePostScreen(
                     label = { Text(stringResource(R.string.field_body)) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(min = 150.dp)
+                        .heightIn(min = 150.dp),
+                    trailingIcon = {
+                        if (uiState.body.isNotEmpty()) {
+                            IconButton(onClick = { focusManager.clearFocus() }) {
+                                Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = "Close keyboard",
+                                    tint = Color.Gray
+                                )
+                            }
+                        }
+                    }
                 )
 
-                if (uiState.error != null) {
+                uiState.error?.let { errorResId ->
                     Text(
-                        text = stringResource(uiState.error),
+                        text = stringResource(errorResId),
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall
                     )
@@ -228,15 +264,39 @@ fun CreatePostScreen(
     }
 }
 
+private fun getThemePreviewUrl(theme: PostTheme): String {
+    val seed = "preview"
+    return when (theme) {
+        PostTheme.LANDSCAPE -> "https://picsum.photos/seed/$seed/800/600"
+        PostTheme.ROBOT -> "https://robohash.org/$seed?size=800x600"
+        PostTheme.AVATAR -> "https://i.pravatar.cc/800?u=$seed"
+        PostTheme.TECH -> "https://loremflickr.com/800/600/technology?lock=1"
+        PostTheme.KITTEN -> "https://loremflickr.com/800/600/kitten?lock=1"
+        PostTheme.FOOD -> "https://loremflickr.com/800/600/food?lock=1"
+        PostTheme.NATURE -> "https://loremflickr.com/800/600/nature?lock=1"
+        PostTheme.BEARD -> "https://placebeard.it/800/600?random=1"
+    }
+}
+
+private fun PostTheme.toResId(): Int {
+    return when (this) {
+        PostTheme.LANDSCAPE -> R.string.theme_landscape
+        PostTheme.ROBOT -> R.string.theme_robot
+        PostTheme.AVATAR -> R.string.theme_avatar
+        PostTheme.TECH -> R.string.theme_tech
+        PostTheme.KITTEN -> R.string.theme_kitten
+        PostTheme.FOOD -> R.string.theme_food
+        PostTheme.NATURE -> R.string.theme_nature
+        PostTheme.BEARD -> R.string.theme_beard
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
-private fun CreatePostScreenPreview() {
+fun CreatePostScreenPreview() {
     JetpackMviTheme {
         CreatePostScreen(
-            uiState = CreatePostUiState(
-                title = "Nuovo Post",
-                body = "Descrizione del contenuto del post..."
-            ),
+            uiState = CreatePostUiState(),
             onAction = {}
         )
     }

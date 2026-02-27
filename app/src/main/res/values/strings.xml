@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TestIdeAiApp</string>
+    <string name="app_name">Jetpack MVI</string>
 
     <!-- Home Screen -->
     <string name="home_title">Explore Posts</string>

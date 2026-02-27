@@ -41,10 +41,12 @@ class DetailViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(isLoading = true)
             val post = getPostDetailUseCase(id)
             if (post != null) {
+                val resolvedImageUrl = post.imageUrl
+                    ?: imageProvider.getPostImageUrl(post.id, post.theme, 800, 600)
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     post = post,
-                    imageUrl = imageProvider.getPostImageUrl(post.id, post.theme, 800, 600)
+                    imageUrl = resolvedImageUrl
                 )
             } else {
                 _uiState.value = _uiState.value.copy(isLoading = false, error = R.string.detail_error_not_found)

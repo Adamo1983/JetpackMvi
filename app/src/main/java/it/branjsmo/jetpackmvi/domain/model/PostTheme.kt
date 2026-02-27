@@ -8,6 +8,5 @@ enum class PostTheme {
     KITTEN,
     FOOD,
     NATURE,
-    BEARD,
-    CAGE
+    BEARD
 }

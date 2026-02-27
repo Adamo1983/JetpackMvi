@@ -15,7 +15,6 @@ class PicsumImageProvider @Inject constructor() : RepositoryImageProvider {
             PostTheme.FOOD -> "https://loremflickr.com/$width/$height/food?lock=$postId"
             PostTheme.NATURE -> "https://loremflickr.com/$width/$height/nature?lock=$postId"
             PostTheme.BEARD -> "https://placebeard.it/$width/$height?random=$postId"
-            PostTheme.CAGE -> "https://www.placecage.com/$width/$height?random=$postId"
         }
     }
 }

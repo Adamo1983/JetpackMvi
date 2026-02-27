@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import it.branjsmo.jetpackmvi.domain.model.Post
+import it.branjsmo.jetpackmvi.domain.model.PostTheme
 import it.branjsmo.jetpackmvi.presentation.theme.JetpackMviTheme
 
 @Composable
@@ -34,7 +35,7 @@ fun PostItem(
     ) {
         Column {
             AsyncImage(
-                model = "https://picsum.photos/seed/${post.id}/800/400",
+                model = post.imageUrl ?: getImageUrlForTheme(post.id, post.theme),
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -58,6 +59,19 @@ fun PostItem(
                 )
             }
         }
+    }
+}
+
+private fun getImageUrlForTheme(postId: Int, theme: PostTheme): String {
+    return when (theme) {
+        PostTheme.LANDSCAPE -> "https://picsum.photos/seed/$postId/800/400"
+        PostTheme.ROBOT -> "https://robohash.org/$postId?size=800x400"
+        PostTheme.AVATAR -> "https://i.pravatar.cc/800?u=$postId"
+        PostTheme.TECH -> "https://loremflickr.com/800/400/technology?lock=$postId"
+        PostTheme.KITTEN -> "https://loremflickr.com/800/400/kitten?lock=$postId"
+        PostTheme.FOOD -> "https://loremflickr.com/800/400/food?lock=$postId"
+        PostTheme.NATURE -> "https://loremflickr.com/800/400/nature?lock=$postId"
+        PostTheme.BEARD -> "https://placebeard.it/800/400?random=$postId"
     }
 }
 

@@ -24,6 +24,7 @@ class CreatePostViewModel @Inject constructor(
             is CreateAction.OnTitleChange -> _uiState.value = _uiState.value.copy(title = action.title)
             is CreateAction.OnBodyChange -> _uiState.value = _uiState.value.copy(body = action.body)
             is CreateAction.OnImageSelected -> _uiState.value = _uiState.value.copy(selectedImageUri = action.uri)
+            is CreateAction.OnThemeChange -> _uiState.value = _uiState.value.copy(theme = action.theme)
             is CreateAction.OnCreateClick -> createPost()
             else -> {}
         }
@@ -33,6 +34,7 @@ class CreatePostViewModel @Inject constructor(
         val title = _uiState.value.title
         val body = _uiState.value.body
         val imageUri = _uiState.value.selectedImageUri
+        val theme = _uiState.value.theme
 
         if (title.isBlank() || body.isBlank()) {
             _uiState.value = _uiState.value.copy(error = R.string.error_empty_fields)
@@ -47,6 +49,7 @@ class CreatePostViewModel @Inject constructor(
                     userId = 1,
                     title = title,
                     body = body,
+                    theme = theme,
                     imageUrl = imageUri?.toString()
                 )
             )

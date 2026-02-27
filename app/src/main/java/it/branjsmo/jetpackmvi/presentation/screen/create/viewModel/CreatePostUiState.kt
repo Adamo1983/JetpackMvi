@@ -2,11 +2,13 @@ package it.branjsmo.jetpackmvi.presentation.screen.create.viewModel
 
 import android.net.Uri
 import androidx.annotation.StringRes
+import it.branjsmo.jetpackmvi.domain.model.PostTheme
 
 data class CreatePostUiState(
     val title: String = "",
     val body: String = "",
     val selectedImageUri: Uri? = null,
+    val theme: PostTheme = PostTheme.LANDSCAPE,
     val isLoading: Boolean = false,
     val isSuccess: Boolean = false,
     @get:StringRes val error: Int? = null

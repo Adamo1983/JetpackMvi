@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PostDao {
-    @Query("SELECT * FROM posts")
+    @Query("SELECT * FROM posts ORDER BY id DESC")
     fun getPosts(): Flow<List<PostEntity>>
 
     @Query("SELECT * FROM posts WHERE id = :id")

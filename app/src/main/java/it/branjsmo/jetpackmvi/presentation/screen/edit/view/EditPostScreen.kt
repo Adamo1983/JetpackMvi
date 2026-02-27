@@ -1,13 +1,21 @@
 package it.branjsmo.jetpackmvi.presentation.screen.edit.view
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import it.branjsmo.jetpackmvi.R
@@ -24,6 +32,9 @@ fun EditPostScreen(
     onAction: (EditAction) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val scrollState = rememberScrollState()
 
     Scaffold(
         topBar = {
@@ -36,88 +47,132 @@ fun EditPostScreen(
                             contentDescription = stringResource(R.string.detail_back)
                         )
                     }
+                },
+                actions = {
+                    TextButton(onClick = { 
+                        focusManager.clearFocus()
+                        keyboardController?.hide()
+                    }) {
+                        Text(
+                            text = "CHIUDI",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
             )
         }
     ) { padding ->
-        Box(modifier = Modifier.padding(padding)) {
-            if (uiState.isLoading && uiState.title.isEmpty()) {
-                LoadingAnimation(modifier = Modifier.align(Alignment.Center))
-            } else {
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+        if (uiState.isLoading && uiState.title.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentAlignment = Alignment.Center
+            ) {
+                LoadingAnimation()
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .imePadding() // Ridimensiona l'area di contenuto quando la tastiera è aperta
+                    .verticalScroll(scrollState)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                OutlinedTextField(
+                    value = uiState.title,
+                    onValueChange = { onAction(EditAction.OnTitleChange(it)) },
+                    label = { Text(stringResource(R.string.field_title)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+                )
+
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = { expanded = !expanded },
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     OutlinedTextField(
-                        value = uiState.title,
-                        onValueChange = { onAction(EditAction.OnTitleChange(it)) },
-                        label = { Text(stringResource(R.string.field_title)) },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
-                    )
-
-                    ExposedDropdownMenuBox(
-                        expanded = expanded,
-                        onExpandedChange = { expanded = !expanded },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        OutlinedTextField(
-                            value = stringResource(uiState.theme.toResId()),
-                            onValueChange = {},
-                            readOnly = true,
-                            label = { Text(stringResource(R.string.field_theme)) },
-                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                            modifier = Modifier
-                                .menuAnchor(MenuAnchorType.PrimaryNotEditable)
-                                .fillMaxWidth()
-                        )
-                        ExposedDropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false }
-                        ) {
-                            PostTheme.entries.forEach { theme ->
-                                DropdownMenuItem(
-                                    text = { Text(stringResource(theme.toResId())) },
-                                    onClick = {
-                                        onAction(EditAction.OnThemeChange(theme))
-                                        expanded = false
-                                    }
-                                )
-                            }
-                        }
-                    }
-
-                    OutlinedTextField(
-                        value = uiState.body,
-                        onValueChange = { onAction(EditAction.OnBodyChange(it)) },
-                        label = { Text(stringResource(R.string.field_body)) },
+                        value = stringResource(uiState.theme.toResId()),
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text(stringResource(R.string.field_theme)) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                         modifier = Modifier
+                            .menuAnchor(MenuAnchorType.PrimaryNotEditable)
                             .fillMaxWidth()
-                            .weight(1f)
                     )
-
-                    if (uiState.error != null) {
-                        Text(
-                            text = stringResource(uiState.error),
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-
-                    Button(
-                        onClick = { onAction(EditAction.OnSaveClick) },
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = !uiState.isLoading
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
                     ) {
-                        if (uiState.isLoading) {
-                            LoadingAnimation(circleSize = 8.dp, circleColor = MaterialTheme.colorScheme.onPrimary)
-                        } else {
-                            Text(stringResource(R.string.button_save_changes))
+                        PostTheme.entries.forEach { theme ->
+                            DropdownMenuItem(
+                                text = { Text(stringResource(theme.toResId())) },
+                                onClick = {
+                                    onAction(EditAction.OnThemeChange(theme))
+                                    expanded = false
+                                }
+                            )
                         }
                     }
                 }
+
+                OutlinedTextField(
+                    value = uiState.body,
+                    onValueChange = { onAction(EditAction.OnBodyChange(it)) },
+                    label = { Text(stringResource(R.string.field_body)) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 250.dp),
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Done // Mostra il tasto di spunta/fine sulla tastiera
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            focusManager.clearFocus()
+                            keyboardController?.hide()
+                        }
+                    ),
+                    trailingIcon = {
+                        IconButton(onClick = { 
+                            focusManager.clearFocus()
+                            keyboardController?.hide()
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = "Close keyboard",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                )
+
+                uiState.error?.let { errorRes ->
+                    Text(
+                        text = stringResource(errorRes),
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+
+                Button(
+                    onClick = { onAction(EditAction.OnSaveClick) },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = !uiState.isLoading
+                ) {
+                    if (uiState.isLoading) {
+                        LoadingAnimation(circleSize = 8.dp, circleColor = MaterialTheme.colorScheme.onPrimary)
+                    } else {
+                        Text(stringResource(R.string.button_save_changes))
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(32.dp))
             }
         }
     }
@@ -133,7 +188,6 @@ private fun PostTheme.toResId(): Int {
         PostTheme.FOOD -> R.string.theme_food
         PostTheme.NATURE -> R.string.theme_nature
         PostTheme.BEARD -> R.string.theme_beard
-        PostTheme.CAGE -> R.string.theme_cage
     }
 }
 
