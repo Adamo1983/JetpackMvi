@@ -21,3 +21,6 @@
 /.gradle/8.13/gc.properties
 /.idea/modules/app/TestIdeAiApp.app.iml
 /local.properties
+/app/release/app-release.aab
+/.idea/easycode.ignore
+/.claude/settings.local.json
